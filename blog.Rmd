@@ -10,8 +10,28 @@ output: html_document
 
 
 ```{r, include=FALSE}
+library(tidyverse)
+library(ggthemes)
+
 load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
+```
+//select org_type and id from committees
+```{r}
+
+sel_com <- committees%>%
+  select(cmte_id,org_type)
+  
+```
+//select com_id and party from candidates
+```{r}
+sel_cand <- candidates%>%
+  select(cand_pcc,cand_party_affiliation)%>%
+  rename(cmte_id=cand_pcc)
+```
+
+```{r}
+
 ```
