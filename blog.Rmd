@@ -33,5 +33,6 @@ sel_cand <- candidates%>%
 ```
 
 ```{r}
-
+new_data <- sel_cand%>%
+  right_join(sel_com,by="cmte_id")
 ```
