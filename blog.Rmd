@@ -19,57 +19,36 @@ load("committees.rda")
 load("contributions.rda")
 ```
 
-```{r}
 
-sel_com <- committees%>%
-  select(cmte_id,org_type)
-#select org_type and id from committees
+```{r}
+money_from_state <- contributions%>%
+  group_by(state)%>%
+  summarise(total_amt=sum(transaction_amt))%>%
+  arrange(desc(total_amt))
 ```
 
 ```{r}
-sel_cand <- candidates%>%
-  select(cand_pcc,cand_party_affiliation)%>%
-  rename(cmte_id=cand_pcc)
-# select com_id and party from candidates
+com_from_state <- committees%>%
+  group_by(cmte_state)%>%
+  summarise(total_com=n())%>%
+  arrange(desc(total_com))%>%
+  rename(state=cmte_state)
+
 ```
 
 ```{r}
-joined_data <- sel_cand%>%
-  left_join(sel_com,by="cmte_id")%>%
-  rename(party=cand_party_affiliation)%>%
-  rename(id=cmte_id)
-# join them and rename
+cand_from_state <- candidates%>%
+  group_by(cand_state)%>%
+  summarise(total_cand=n())%>%
+  arrange(desc(total_cand))%>%
+  rename(state=cand_state)
 ```
 
 ```{r}
-totalnum_party <-joined_data%>%
-  group_by(party)%>%
-  summarise(sumOrg=n())
-# count the total num of org for each party
+joined_state <- money_from_state%>%
+  inner_join(com_from_state,by="state")
+
+joined_state <- joined_state%>%
+  inner_join(cand_from_state,by="state")
 ```
-
-```{r}
-joined_data <- joined_data%>%
-  full_join(totalnum_party,by="party")
-```
-
-```{r}
-# function that takes a party return its commite's type 
-committee_org_type <- function(chosenparty){
-  joined_data%>%
-    filter(party==chosenparty)%>%
-    group_by(org_type)%>%
-    summarise(each_type=n())
-}
-```
-
-```{r}
- joined_data
-    
-```
-
-```{r}
-
-```
-
 
