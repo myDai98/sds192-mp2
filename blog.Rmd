@@ -12,7 +12,7 @@ output: html_document
 ```{r, include=FALSE}
 library(tidyverse)
 library(ggthemes)
-
+library(maps)
 load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
@@ -52,3 +52,46 @@ joined_state <- joined_state%>%
   inner_join(cand_from_state,by="state")
 ```
 
+```{r}
+all_states <- map_data("state")
+
+```
+
+```{r}
+ditch_the_axes <- theme(
+  axis.text = element_blank(),
+  axis.line = element_blank(),
+  axis.ticks = element_blank(),
+  panel.border = element_blank(),
+  panel.grid = element_blank(),
+  axis.title = element_blank()
+  )
+
+```
+
+```{r}
+USA_base <- ggplot() + geom_polygon( data=all_states, aes(x=long, y=lat, group = group) )+
+  ditch_the_axes
+```
+
+```{r}
+ggplot(as.data.frame(money_from_state), aes(map_id = state)) +
+    geom_map(aes(fill = total_amt), map = all_states)+
+    expand_limits(x = all_states$long, y = all_states$lat)
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
