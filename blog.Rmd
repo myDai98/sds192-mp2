@@ -12,6 +12,7 @@ output: html_document
 ```{r, include=FALSE}
 library(tidyverse)
 library(ggthemes)
+library(ggplot2)
 
 load("house_elections.rda")
 load("candidates.rda")
@@ -21,6 +22,7 @@ load("contributions.rda")
 
 
 ```{r}
+#Creating file with total contributions for each state
 money_from_state <- contributions%>%
   group_by(state)%>%
   summarise(total_amt=sum(transaction_amt))%>%
@@ -28,6 +30,7 @@ money_from_state <- contributions%>%
 ```
 
 ```{r}
+#Creating file with total number of committees for each state
 com_from_state <- committees%>%
   group_by(cmte_state)%>%
   summarise(total_com=n())%>%
@@ -37,6 +40,7 @@ com_from_state <- committees%>%
 ```
 
 ```{r}
+#Creating file with total number of candidates from each state
 cand_from_state <- candidates%>%
   group_by(cand_state)%>%
   summarise(total_cand=n())%>%
@@ -45,10 +49,16 @@ cand_from_state <- candidates%>%
 ```
 
 ```{r}
+#Joining the three files together by state to create the file we're going to work with
 joined_state <- money_from_state%>%
   inner_join(com_from_state,by="state")
 
 joined_state <- joined_state%>%
   inner_join(cand_from_state,by="state")
+```
+
+#Creating dot plot
+```{r}
+ggplot(data=joined_state, aes(x=total_cand, y=total_com)) + geom_point(aes(col=total_amt, size=total_amt)) + guides(color=guide_legend(), size=guide_legend()) + scale_colour_gradient(low="light green", high="dark green")
 ```
 
