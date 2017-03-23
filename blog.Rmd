@@ -10,8 +10,10 @@ output: html_document
 
 
 ```{r, include=FALSE}
+# load needed library and data 
 library(tidyverse)
 library(ggthemes)
+library(maps)
 library(ggplot2)
 
 load("house_elections.rda")
@@ -57,13 +59,26 @@ joined_state <- joined_state%>%
   inner_join(cand_from_state,by="state")
 ```
 
-#Creating dot plot
+
 ```{r}
+<<<<<<< HEAD
 ggplot(data=joined_state, aes(x=total_cand, y=total_com)) + geom_point(aes(col=total_amt, size=total_amt)) +
 guides(color=guide_legend(title="Amount of Contributions"), size=guide_legend(title="Amount of Contributions")) + scale_colour_gradient(low="light green", high="dark green")  +
   xlab("Total Candidates in Each State") + ylab("Total Committees in Each State") + 
   annotate("text", x=42, y=1300, label="DC") +
   annotate("text", x=138, y=900, label="VA") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
+=======
+#Creating dot plot
+ggplot(data=joined_state, aes(x=total_cand, y=total_com)) + geom_point(aes(col=total_amt, size=total_amt)) + guides(color=guide_legend(), size=guide_legend()) + scale_colour_gradient(low="light green", high="dark green")
+>>>>>>> 86d10f56678a207ec3f6d510d9ca360819f5a279
 ```
 
+# One Sentence Summary:
+This graph shows the relationship among number of candidates, number of committe, and amount of contribution in each states. and we can find two "outlier" states: Virginia and DC, which have relatively small number of candidates but large number of committees and amount of contribution. 
+
+# Background Information and Analysis 
+
+The x-axis is the total number of candidates for each state, and the y-axis is the total number of committees for each state. The size and color of dots, which represent states, are mapped to the total amount of contribution from each state. 
+
+Two biggest outlier states are DC and Virginia, which have relatively small number of candidates but large number of committees and amount of contribution. DC is capital of USA, so as a kind of political center, it should be more active in political campaign than other states. 
