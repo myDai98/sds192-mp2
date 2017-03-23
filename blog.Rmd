@@ -59,6 +59,11 @@ joined_state <- joined_state%>%
 
 #Creating dot plot
 ```{r}
-ggplot(data=joined_state, aes(x=total_cand, y=total_com)) + geom_point(aes(col=total_amt, size=total_amt)) + guides(color=guide_legend(), size=guide_legend()) + scale_colour_gradient(low="light green", high="dark green")
+ggplot(data=joined_state, aes(x=total_cand, y=total_com)) + geom_point(aes(col=total_amt, size=total_amt)) +
+guides(color=guide_legend(title="Amount of Contributions"), size=guide_legend(title="Amount of Contributions")) + scale_colour_gradient(low="light green", high="dark green")  +
+  xlab("Total Candidates in Each State") + ylab("Total Committees in Each State") + 
+  annotate("text", x=42, y=1300, label="DC") +
+  annotate("text", x=138, y=900, label="VA") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 ```
 
