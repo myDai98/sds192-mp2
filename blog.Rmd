@@ -1,20 +1,20 @@
 ---
 title: "Mini-Project 2"
-author: "Your Name Here"
+author: "Kat Kyuchukova and Minyue Dai"
 date: "March 24, 2017"
 output: html_document
 ---
 
 
-## Loading the data
+###### Loading the data
 
 
 ```{r, include=FALSE}
 # load needed library and data 
 library(tidyverse)
 library(ggthemes)
-library(maps)
 library(ggplot2)
+library(scales)
 
 load("house_elections.rda")
 load("candidates.rda")
@@ -23,7 +23,7 @@ load("contributions.rda")
 ```
 
 
-```{r}
+```{r message=FALSE}
 #Creating file with total contributions for each state
 money_from_state <- contributions%>%
   group_by(state)%>%
@@ -31,26 +31,26 @@ money_from_state <- contributions%>%
   arrange(desc(total_amt))
 ```
 
-```{r}
+```{r message=FALSE}
 #Creating file with total number of committees for each state
 com_from_state <- committees%>%
   group_by(cmte_state)%>%
   summarise(total_com=n())%>%
   arrange(desc(total_com))%>%
-  rename(state=cmte_state)
+  rename(state=cmte_state) #renaming state so that join is easier
 
 ```
 
-```{r}
+```{r message=FALSE}
 #Creating file with total number of candidates from each state
 cand_from_state <- candidates%>%
   group_by(cand_state)%>%
   summarise(total_cand=n())%>%
   arrange(desc(total_cand))%>%
-  rename(state=cand_state)
+  rename(state=cand_state) #renaming state so that join is easier
 ```
 
-```{r}
+```{r message=FALSE}
 #Joining the three files together by state to create the file we're going to work with
 joined_state <- money_from_state%>%
   inner_join(com_from_state,by="state")
@@ -59,11 +59,13 @@ joined_state <- joined_state%>%
   inner_join(cand_from_state,by="state")
 ```
 
-#Creating plot
-```{r}
+##How Committees and Candidates Are Influenced by Money
+```{r message=FALSE}
 ggplot(data=joined_state, aes(x=total_cand, y=total_com)) + 
-  geom_point(aes(col=total_amt, size=total_amt)) +
-guides(color=guide_legend(title="Amount of Contributions"), size=guide_legend(title="Amount of Contributions")) + scale_colour_gradient(low="light green", high="dark green")  +
+geom_point(aes(col=total_amt, size=total_amt)) +
+scale_colour_gradient(low="light green", high="dark green", labels=comma)  +
+scale_size_continuous(labels=comma) +
+guides(color=guide_legend(title="Amount of Contributions (in US dollars)", title.position="bottom", title.hjust=.5),  size=guide_legend(title="Amount of Contributions (in US dollars)")) + 
   ggtitle("Candidates and Committees in Each State") +
   theme_fivethirtyeight() + 
   theme(axis.title = element_text()) + 
@@ -73,14 +75,18 @@ guides(color=guide_legend(title="Amount of Contributions"), size=guide_legend(ti
   annotate("text", x=42, y=1300, label="DC") +
   annotate("text", x=138, y=900, label="VA") +
   annotate("text", x=542, y=1450, label="CA") +
-  theme(panel.grid.minor = element_blank())
+  annotate("text", x=168, y=275, label="MD") +
+  annotate("text", x=365, y=1450, label="FL") +
+  theme(panel.grid.minor = element_blank()) 
 ```
 
-# One Sentence Summary:
-This graph shows the relationship among number of candidates, number of committee, and amount of contribution in each states. and we can find two "outlier" states: Virginia and DC, which have relatively small number of candidates but large number of committees and amount of contribution. 
 
-# Background Information and Analysis 
+When we looked at the data from the FEC, we were most interested in what the relationships were among the variables for each state. This graph shows the relationship among number of candidates, number of committees, and the amount of contributions in each states. The x-axis is the total number of candidates for each state, and the y-axis is the total number of committees for each state. The size and color of dots, which represent states, are mapped to the total amount of contribution from each state. 
 
-The x-axis is the total number of candidates for each state, and the y-axis is the total number of committees for each state. The size and color of dots, which represent states, are mapped to the total amount of contribution from each state. 
+The most interesting part of this visualization in our opinion was the outliers. On the end of higher contributions, we can find two "outlier" states: Virginia and DC (although technically not a state, we treated it as one for the purposes of this graph), which have relatively small number of candidates but a large number of committees and amount of contributions. We assume that the high amount of committees they have with such a low amount of candidates is from the amount of contributions they have. We assume that the the geography of the state also plays a role, as Maryland also has a much higher amount of contributions than the other states, and these three states all make up the "DMV" area. Since DC is the capital of the country, it makes sense for this area (and its surroundings) to be gathering more contributions and for it to have more power with committees.
 
-Two biggest outlier states are DC and Virginia, which have relatively small number of candidates but large number of committees and amount of contribution. DC is capital of USA, so as a kind of political center, it should be more active in political campaign than other states. 
+The lower outliers are also interesting. Florida and California both have around the same amount of contributions as most states, but they have more candidates and significantly more committees, even more than DC and Virginia. This might have something to do with California being such a large state, but does not give any specific answers for Florida.
+
+Aside from the outliers, this graph is useful in showing the relationship between these three variables. Although it is somewhat expected, it is still useful to see the positive correlation between candidates and committees. 
+
+
